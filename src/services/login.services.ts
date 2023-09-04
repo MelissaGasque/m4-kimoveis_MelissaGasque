@@ -19,14 +19,14 @@ export const loginService = async (payload: LoginRequest): Promise<string> => {
     }
 
     const token: string = sign(
-        { email: user.email, admin: user.admin, id: user.id },
+        { email: user.email, admin: user.admin, idToken: user.id }, 
         process.env.SECRET_KEY!,
         {
             expiresIn: process.env.EXPIRES_IN!,
             subject: user.id.toString(),
         }
     );
-  
+
     return token
         
 } 

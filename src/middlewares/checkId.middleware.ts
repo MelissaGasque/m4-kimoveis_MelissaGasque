@@ -4,11 +4,10 @@ import { User } from "../entities";
 import { AppError } from "../errors/App.errors";
 
 export const checkID = async(req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const userId = AppDataSource.getRepository(User).findOneBy({id: Number(req.params.id)})
-    console.log(userId)
+    const userId: User | null = await AppDataSource.getRepository(User).findOneBy({id: Number(req.params.id)})
     if(!userId){
         throw new AppError("User not found", 404)
     }
-
+    res.locals.userId = userId;
     return next()
 }

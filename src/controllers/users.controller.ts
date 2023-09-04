@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { createUserService, readUsersService, updateUserService } from "../services/users.services"
+import { createUserService, readUsersService, softDeleteService, updateUserService } from "../services/users.services"
 import { UserReturn } from "../interfaces/users.interface";
 
 
@@ -24,3 +24,7 @@ export const updateUserController = async(req: Request, res: Response): Promise<
 };
 
 //Realiza um soft delete no usuário
+export const softDeleteController = async (req: Request, res: Response): Promise<Response> => {
+   await softDeleteService(res.locals.userId);
+    return res.status(204).json();
+};

@@ -14,6 +14,6 @@ export const emailExists = async(req: Request, res:Response, next: NextFunction)
         
         res.locals = {...res, movie: emailAlreadyExist}
     }
-   console.log(res.locals)
+ 
     return next()
 } 
