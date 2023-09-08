@@ -13,3 +13,4 @@ export class Category {
     realEstate: Array<RealEstate>
    
 }
+

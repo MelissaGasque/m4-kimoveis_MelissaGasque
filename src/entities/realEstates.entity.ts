@@ -11,16 +11,16 @@ export class RealEstate {
     sold: boolean;
 
     @Column({type: 'decimal', precision: 12, scale: 2, default: 0})
-    value: number | (() => string);
+    value: string | number;
 
-    @Column()
+    @Column({type: "int"})
     size: number;
 
-    @CreateDateColumn()
-    createdAt: Date;
+    @CreateDateColumn({type: "date"})
+    createdAt: string;
 
-    @UpdateDateColumn()
-    updatedAt: Date;
+    @UpdateDateColumn({type: "date"})
+    updatedAt: string;
 
     @OneToOne(() => Address, (ad) => ad.realEstate)
     @JoinColumn()

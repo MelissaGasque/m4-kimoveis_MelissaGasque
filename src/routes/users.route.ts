@@ -10,5 +10,5 @@ export const userRouter = Router();
 userRouter.post("", bodyValidated(userCreateSchema), emailExists, createUserController);
 userRouter.get("", verifyToken, isAdmTrue, readUsersController);
 userRouter.use("/:id", checkID, verifyToken, isAdmTrue,)
-userRouter.patch("/:id",  updateUserController);
+userRouter.patch("/:id", checkID,  updateUserController);
 userRouter.delete("/:id", softDeleteController)
