@@ -33,8 +33,8 @@ export const showRealEstateService = async (): Promise<ShowRealEstate[]> => {
     const realEstateRepo: Repository<RealEstate> = AppDataSource.getRepository(RealEstate);
 
     const showRealEstate = await realEstateRepo
-    .createQueryBuilder('realEstate')
-    .leftJoinAndSelect('realEstate.address', 'address')
+    .createQueryBuilder("realEstate")
+    .leftJoinAndSelect("realEstate.address", "address")
     .getMany();
 
     return showRealEstate;

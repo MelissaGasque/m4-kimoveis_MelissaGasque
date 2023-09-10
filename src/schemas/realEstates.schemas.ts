@@ -20,12 +20,11 @@ export const createRealEstateSchema = z.object({
     categoryId: z.number().int().positive()
 })
 
-export const showRealEstateSchema = z.object({
-    id: z.number().positive().int(),
-    sold: z.boolean().default(false),
-    value: z.string().or(z.number().positive()).default(0),
-    size: z.number().positive(),
-    createdAt: z.string(),
-    updatedAt: z.string(),
-    address: addressCreateSchema
+export const showRealEstateSchema = realEstateSchema.omit({
+   category: true
+})
+
+export const showRealEstateSchema2 = realEstateSchema.omit({
+    category: true,
+    address: true
 })

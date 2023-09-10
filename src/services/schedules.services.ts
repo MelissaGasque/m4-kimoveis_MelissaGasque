@@ -1,6 +1,6 @@
 import { FindOneOptions, Repository } from "typeorm";
-import { CreateSchedulesInterface } from "../interfaces/schedules.interface";
-import { RealEstate, Schedule } from "../entities";
+import { CreateSchedulesInterface, ShowAllRealEstateSchedules } from "../interfaces/schedules.interface";
+import { RealEstate, Schedule, User } from "../entities";
 import { AppDataSource } from "../data-source";
 import { AppError } from "../errors/App.errors";
 
@@ -19,7 +19,6 @@ export const createSchedulesService = async(payload: CreateSchedulesInterface, u
         throw new AppError("RealEstate not found", 404);
     };
     
-
     //O mesmo userId não pode agendar um mesmo horário/data em dois realEstateId
     const existingUserSchedule = await scheduleRepo.findOne({
         where: {
@@ -59,7 +58,7 @@ export const createSchedulesService = async(payload: CreateSchedulesInterface, u
     if (diaDaSemana === 0 || diaDaSemana === 6) { 
         throw new AppError("Invalid date, work days are monday to friday");
     };
- 
+
     const schedule = scheduleRepo.create({
         date: payload.date, 
         hour: payload.hour,
@@ -71,3 +70,62 @@ export const createSchedulesService = async(payload: CreateSchedulesInterface, u
    
     return  ({"message":"Schedule created"});
 };
+
+
+export const readSchedulesServices = async (realEstateId: number, admin: boolean) => {
+    
+    if (admin === false){
+      throw new AppError("Insufficient permission", 403);
+    }
+
+    const realEstateRepo: Repository<RealEstate> = AppDataSource.getRepository(RealEstate);
+
+    const realEstate = await  realEstateRepo.createQueryBuilder("realEstate")
+        .leftJoinAndSelect("realEstate.address", "address")
+        .leftJoinAndSelect("realEstate.category", "category")
+        .leftJoinAndSelect("realEstate.schedule", "schedule")
+        .leftJoinAndSelect("schedule.user", "user")   
+        .where("realEstate.id = :id", { id: Number(realEstateId) })
+        .getMany();
+
+        const idExists = await realEstateRepo.findOneBy({id: Number(realEstateId)})
+
+        if (!idExists) {
+            throw new AppError("RealEstate not found", 404);
+        }
+
+        const formattedRealEstate = [];
+
+        for (const item of realEstate) {
+            const formattedItem = {
+                address: item.address,
+                category: item.category,
+                createdAt: item.createdAt,
+                id: item.id,
+                schedules: [] as {
+                    date: string;
+                    hour: string;
+                    id: number;
+                    user: User;
+                }[],
+                size: item.size,
+                sold: item.sold,
+                updatedAt: item.updatedAt,
+                value: item.value
+            };
+    
+            for (const scheduleItem of item.schedule) {
+                formattedItem.schedules.push({
+                    date: scheduleItem.date,
+                    hour: scheduleItem.hour,
+                    id: scheduleItem.id,
+                    user: scheduleItem.user
+                });
+            }
+    
+            formattedRealEstate.push(formattedItem);
+        }
+    
+        return formattedRealEstate[0]; 
+  };
+

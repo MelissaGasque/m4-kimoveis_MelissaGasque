@@ -6,10 +6,10 @@ export const isAdmTrue = async(req: Request, res: Response, next: NextFunction) 
     const { sub, admin } = res.locals.decoded;
   
     if (admin === true) return next();
-
+   
     if ( id !== sub ) {
       throw new AppError("Insufficient permission", 403);
     }
-    
+
     return next()
 }
